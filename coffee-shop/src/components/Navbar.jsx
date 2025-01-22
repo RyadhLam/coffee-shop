@@ -1,67 +1,106 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import FullShop from './FullShop';
 
-function Navbar() {
+function Navbar({ cartItemsCount, onCartClick }) {
     const [isOpen, setIsOpen] = useState(false);
+    const [showShop, setShowShop] = useState(false);
+    const [isScrolled, setIsScrolled] = useState(false);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            const scrollPosition = window.scrollY;
+            setIsScrolled(scrollPosition > 50);
+        };
+
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
+
+    const scrollToSection = (sectionId) => {
+        if (sectionId === 'boutique') {
+            setShowShop(true);
+            return;
+        }
+        
+        const element = document.getElementById(sectionId);
+        if (element) {
+            const offset = isScrolled ? 80 : 120;
+            const elementPosition = element.getBoundingClientRect().top;
+            const offsetPosition = elementPosition + window.pageYOffset - offset;
+
+            window.scrollTo({
+                top: offsetPosition,
+                behavior: 'smooth'
+            });
+        }
+        setIsOpen(false);
+    };
 
     return (
-      <nav className="bg-white/95 backdrop-blur-sm text-coffee-500 py-4 fixed w-full top-0 z-50 shadow-lg">
-        <div className="container mx-auto px-4 flex justify-between items-center">
-          <h1 className="text-2xl font-bold">coffee.</h1>
-          
-          {/* Bouton burger pour mobile */}
-          <button 
-            onClick={() => setIsOpen(!isOpen)}
-            className="md:hidden p-2"
-          >
-            <div className="w-6 flex flex-col gap-1">
-              <span className={`block h-0.5 w-full bg-coffee-500 transform transition-all duration-300 ${isOpen ? 'rotate-45 translate-y-1.5' : ''}`}></span>
-              <span className={`block h-0.5 w-full bg-coffee-500 transition-all duration-300 ${isOpen ? 'opacity-0' : ''}`}></span>
-              <span className={`block h-0.5 w-full bg-coffee-500 transform transition-all duration-300 ${isOpen ? '-rotate-45 -translate-y-1.5' : ''}`}></span>
-            </div>
-          </button>
+        <>
+            <nav className={`fixed w-full top-0 z-50 transition-all duration-300 ${
+                isScrolled ? 'py-2' : 'py-4'
+            } bg-white/95 backdrop-blur-sm shadow-lg`}>
+                <div className="container mx-auto px-4">
+                    <div className="flex justify-between items-center">
+                        {/* Logo */}
+                        <a href="#" className={`text-coffee-500 font-bold transition-all duration-300 ${
+                            isScrolled ? 'text-xl' : 'text-2xl'
+                        }`}>
+                            coffee.
+                        </a>
 
-          {/* Menu desktop */}
-          <div className="hidden md:block">
-            <ul className="flex space-x-2">
-              {['Accueil', 'Nos Cafés', 'Contact'].map((item) => (
-                <li key={item}>
-                  <a
-                    href={item === 'Accueil' ? '#' : `#${item.toLowerCase().replace(' ', '-')}`}
-                    className="relative px-4 py-2 rounded-full group overflow-hidden"
-                  >
-                    <span className="relative z-10 transition-colors duration-300">
-                      {item}
-                    </span>
-                    <div className="absolute inset-0 bg-coffee-100 transform scale-x-0 origin-left transition-transform duration-300 ease-out group-hover:scale-x-100 rounded-full"></div>
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
+                        {/* Navigation */}
+                        <div className="hidden md:flex items-center space-x-8">
+                            {[
+                                { name: 'Accueil', id: 'hero' },
+                                { name: 'Boutique', id: 'boutique' },
+                                { name: 'Où nous trouver', id: 'où-nous-trouver' }
+                            ].map((item) => (
+                                <button
+                                    key={item.id}
+                                    onClick={() => scrollToSection(item.id)}
+                                    className={`text-coffee-500 font-semibold hover:text-coffee-400 transition-all duration-300 ${
+                                        isScrolled ? 'text-sm' : 'text-base'
+                                    }`}
+                                >
+                                    {item.name}
+                                </button>
+                            ))}
+                            <button 
+                                onClick={onCartClick}
+                                className="relative p-1.5 hover:bg-coffee-100/50 rounded-full transition-colors"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className={`transition-all duration-300 text-coffee-500 ${
+                                    isScrolled ? 'w-5 h-5' : 'w-6 h-6'
+                                }`}>
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" />
+                                </svg>
+                                {cartItemsCount > 0 && (
+                                    <span className={`absolute -top-1 -right-1 bg-coffee-400 text-white flex items-center justify-center rounded-full transition-all duration-300 ${
+                                        isScrolled ? 'w-4 h-4 text-xs' : 'w-5 h-5 text-xs'
+                                    }`}>
+                                        {cartItemsCount}
+                                    </span>
+                                )}
+                            </button>
+                        </div>
 
-          {/* Menu mobile */}
-          <div className={`
-            absolute top-full left-0 w-full bg-white/95 backdrop-blur-sm md:hidden
-            transform transition-all duration-300 ease-in-out
-            ${isOpen ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0 pointer-events-none'}
-          `}>
-            <ul className="py-4 px-4 space-y-2">
-              {['Accueil', 'Nos Cafés', 'Contact'].map((item) => (
-                <li key={item}>
-                  <a
-                    href={item === 'Accueil' ? '#' : `#${item.toLowerCase().replace(' ', '-')}`}
-                    className="block px-4 py-2 rounded-full hover:bg-coffee-100 transition-colors"
-                    onClick={() => setIsOpen(false)}
-                  >
-                    {item}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      </nav>
-    )
-  }
-  
-  export default Navbar
+                        {/* Menu mobile */}
+                        <button
+                            onClick={() => setIsOpen(!isOpen)}
+                            className="md:hidden p-2 text-coffee-500 hover:bg-coffee-100/50 rounded-lg"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </nav>
+            {showShop && <FullShop onClose={() => setShowShop(false)} />}
+        </>
+    );
+}
+
+export default Navbar;

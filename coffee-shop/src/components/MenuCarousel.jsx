@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import coffee1 from '../assets/59b8c1b16a9b740417cb40ff16a04f0e.jpg';
+import coffee1 from '../assets/th.jpg';
 import coffee2 from '../assets/3a7bdaa81ffbbb17712ca0016eef315e.jpg';
 
 function MenuCarousel() {
@@ -36,9 +36,9 @@ function MenuCarousel() {
   };
 
   return (
-    <section id="nos-cafés" className="py-12 md:py-20 px-4">
-      <div className="container mx-auto">
-        <div className="relative h-[400px] md:h-[600px] rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl">
+    <section id="nos-cafés" className="h-screen relative">
+      <div className="h-full">
+        <div className="relative h-full w-full">
           {menuItems.map((item, index) => (
             <div
               key={index}
@@ -50,26 +50,23 @@ function MenuCarousel() {
                 <img
                   src={item.image}
                   alt={item.title}
-                  className="absolute w-full h-full object-cover object-center"
-                  style={{
-                    objectPosition: '50% 30%'
-                  }}
+                  className="absolute w-full h-full object-cover"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent">
-                  <div className="absolute bottom-0 left-0 right-0 p-4 md:p-8 text-white">
-                    <h3 className="text-2xl md:text-3xl font-bold mb-2">{item.title}</h3>
-                    <p className="text-lg md:text-xl">{item.description}</p>
+                  <div className="absolute bottom-12 left-0 right-0 px-8 md:px-20 text-white">
+                    <h3 className="text-3xl md:text-4xl font-bold mb-4">{item.title}</h3>
+                    <p className="text-xl md:text-2xl max-w-2xl">{item.description}</p>
                   </div>
                 </div>
               </div>
             </div>
           ))}
 
-          {/* Boutons de navigation - cachés sur mobile */}
-          <div className="hidden md:block">
+          {/* Boutons de navigation - maintenant sur les côtés */}
+          <div className="absolute inset-y-0 left-4 md:left-8 right-4 md:right-8 flex items-center justify-between pointer-events-none">
             <button
               onClick={prevSlide}
-              className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/30 text-white p-3 rounded-full transition-all backdrop-blur-sm"
+              className="pointer-events-auto bg-white/20 hover:bg-white/30 text-white p-3 rounded-full transition-all backdrop-blur-sm"
             >
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
@@ -78,7 +75,7 @@ function MenuCarousel() {
 
             <button
               onClick={nextSlide}
-              className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/30 text-white p-3 rounded-full transition-all backdrop-blur-sm"
+              className="pointer-events-auto bg-white/20 hover:bg-white/30 text-white p-3 rounded-full transition-all backdrop-blur-sm"
             >
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
@@ -86,7 +83,7 @@ function MenuCarousel() {
             </button>
           </div>
 
-          {/* Indicateurs - plus gros sur mobile */}
+          {/* Indicateurs - maintenant en bas absolu */}
           <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex space-x-3">
             {menuItems.map((_, index) => (
               <button
