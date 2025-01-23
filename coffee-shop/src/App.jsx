@@ -3,6 +3,7 @@ import Navbar from './components/Navbar'
 import Hero from './components/Hero'
 import Location from './components/Location'
 import Cart from './components/Cart'
+import Footer from './components/Footer'
 
 function App() {
   const [cartItems, setCartItems] = useState([]);
@@ -44,6 +45,7 @@ function App() {
         <Hero />
         <Location />
       </main>
+      <Footer />
       <Cart 
         items={cartItems}
         isOpen={isCartOpen}
